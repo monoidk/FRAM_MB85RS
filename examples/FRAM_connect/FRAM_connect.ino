@@ -16,7 +16,7 @@
 /**************************************************************************/
 
 #include <SPI.h>
-#include <FRAM_MB85RS_SPI.h>
+#include <FRAM_MB85RS.h>
 
 
 //Creating object for FRAM chip

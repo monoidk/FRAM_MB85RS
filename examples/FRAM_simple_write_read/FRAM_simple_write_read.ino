@@ -14,7 +14,7 @@
 /**************************************************************************/
 
 #include <SPI.h>
-#include <FRAM_MB85RS_SPI.h>
+#include <FRAM_MB85RS.h>
 
 
 //dummy data used for the test

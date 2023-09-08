@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 #include <SPI.h>
-#include <FRAM_MB85RS_SPI.h>
+#include <FRAM_MB85RS.h>
 
 // Defines
 //#define ERASE_FRAM  // Erase FRAM at the end of setup if defined
