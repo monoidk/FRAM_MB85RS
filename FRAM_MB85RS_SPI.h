@@ -93,36 +93,36 @@ class FRAM_MB85RS_SPI
     
 
     void	init();
-    boolean	checkDevice();
+    bool	checkDevice();
     
-    boolean	read(uint32_t framAddr, uint8_t *value);
-    boolean	read(uint32_t framAddr, uint16_t *value);
-    boolean	read(uint32_t framAddr, uint32_t *value);
-    boolean	write(uint32_t framAddr, uint8_t value);
-    boolean	write(uint32_t framAddr, uint16_t value);
-    boolean	write(uint32_t framAddr, uint32_t value);
+    bool	read(uint32_t framAddr, uint8_t *value);
+    bool	read(uint32_t framAddr, uint16_t *value);
+    bool	read(uint32_t framAddr, uint32_t *value);
+    bool	write(uint32_t framAddr, uint8_t value);
+    bool	write(uint32_t framAddr, uint16_t value);
+    bool	write(uint32_t framAddr, uint32_t value);
     
-    boolean readArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
-    boolean readArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
-    boolean writeArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
-    boolean writeArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
+    bool	readArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
+    bool	readArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
+    bool	writeArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
+    bool	writeArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
     
-    boolean	isAvailable();
-    boolean	getWPStatus();
-    boolean	enableWP();
-    boolean	disableWP();
-    boolean	eraseChip();
+    bool	isAvailable();
+    bool	getWPStatus();
+    bool	enableWP();
+    bool	disableWP();
+    bool	eraseChip();
     uint32_t getMaxMemAdr();
     uint32_t getLastMemAdr();
     
     
  private:
     
-    boolean		_framInitialised;
+    bool		_framInitialised;
     uint8_t     _cs;            // CS pin
-    boolean     _wp;            // WP management
+    bool	_wp;            // WP management
     uint8_t     _wpPin;         // WP pin connected and Write Protection enabled
-    boolean     _wpStatus;      // WP Status
+    bool	_wpStatus;      // WP Status
     uint8_t     _manufacturer;  // Manufacturer ID
     uint16_t	_productID;     // Product ID
     uint8_t     _densitycode;   // Code which represent the size of the chip
@@ -133,8 +133,8 @@ class FRAM_MB85RS_SPI
     void        _csCONFIG();
     void        _csASSERT();
     void        _csRELEASE();
-    boolean     _getDeviceID();
-    boolean     _deviceID2Serial();
+    bool        _getDeviceID();
+    bool        _deviceID2Serial();
     void        _sendAddr(uint32_t framAddr);
 };
 

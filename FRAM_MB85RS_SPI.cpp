@@ -108,7 +108,7 @@ void FRAM_MB85RS_SPI::init()
     SPISettings(SPICONFIG);
     SPI.begin();
     
-    boolean deviceFound = checkDevice();
+    bool deviceFound = checkDevice();
     
 #if defined(DEBUG_TRACE) || defined(CHIP_TRACE)
     if (!Serial)
@@ -140,9 +140,9 @@ void FRAM_MB85RS_SPI::init()
 ///     @return  0: device not found
 ///              1: device connected
 **/
-boolean FRAM_MB85RS_SPI::checkDevice()
+bool FRAM_MB85RS_SPI::checkDevice()
 {
-	boolean result = _getDeviceID();
+	bool result = _getDeviceID();
   
 	if (result && _manufacturer == FUJITSU_ID && _maxaddress != 0)
     {
@@ -164,7 +164,7 @@ boolean FRAM_MB85RS_SPI::checkDevice()
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint8_t *value )
+bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint8_t *value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -197,7 +197,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint8_t *value )
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
+bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -230,7 +230,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
+bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -265,7 +265,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
+bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -303,7 +303,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
+bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -342,7 +342,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
+bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
 {
     if (framAddr >= _maxaddress || !_framInitialised)
         return false;
@@ -385,7 +385,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
 ///              1: ok
 ///     @note    F-RAM provide a continuous reading with auto-increment of the address
 **/
-boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
 {
     if ( startAddr >= _maxaddress
         || ((startAddr + nbItems - 1) >= _maxaddress)
@@ -427,7 +427,7 @@ boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint8_t values[], size_t
  ///              1: ok
  ///     @note    F-RAM provide a continuous reading with auto-increment of the address
  **/
-boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
 {
     if ( startAddr >= _maxaddress
         || ((startAddr + (nbItems*2) - 2) >= _maxaddress)
@@ -473,7 +473,7 @@ boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint16_t values[], size_
 ///              1: ok
 ///     @note    F-RAM provide a continuous writing with auto-increment of the address
 **/
-boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
 {
     if ( startAddr >= _maxaddress
         || ((startAddr + nbItems - 1) >= _maxaddress)
@@ -517,7 +517,7 @@ boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_
  ///              1: ok
  ///     @note    F-RAM provide a continuous writing with auto-increment of the address
  **/
-boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
 {
     if ( startAddr >= _maxaddress
         || ((startAddr + (nbItems*2) - 2) >= _maxaddress)
@@ -561,7 +561,7 @@ boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint16_t values[], size
 ///    @return  0: ready
 ///             1: unavailable
 **/
-boolean FRAM_MB85RS_SPI::isAvailable()
+bool FRAM_MB85RS_SPI::isAvailable()
 {
 	if ( _framInitialised && digitalReadFast(_cs) == HIGH )
         return true;
@@ -577,7 +577,7 @@ boolean FRAM_MB85RS_SPI::isAvailable()
 ///    @return  0: WP is disable
 ///             1: WP is enable
 **/
-boolean FRAM_MB85RS_SPI::getWPStatus()
+bool FRAM_MB85RS_SPI::getWPStatus()
 {
 	return _wpStatus;
 }
@@ -590,7 +590,7 @@ boolean FRAM_MB85RS_SPI::getWPStatus()
 ///    @return  0: error, WP is not managed
 ///             1: success, WP is enable
 **/
-boolean FRAM_MB85RS_SPI::enableWP(void)
+bool FRAM_MB85RS_SPI::enableWP(void)
 {
 	if (_wp)
     {
@@ -610,7 +610,7 @@ boolean FRAM_MB85RS_SPI::enableWP(void)
 ///    @return  0: error, WP is not managed
 ///             1: success, WP is disable
 **/
-boolean FRAM_MB85RS_SPI::disableWP()
+bool FRAM_MB85RS_SPI::disableWP()
 {
 	if (_wp)
     {
@@ -630,13 +630,13 @@ boolean FRAM_MB85RS_SPI::disableWP()
 ///    @return  0: error
 ///             1: ok
 **/
-boolean FRAM_MB85RS_SPI::eraseChip()
+bool FRAM_MB85RS_SPI::eraseChip()
 {
     if ( !_framInitialised )
         return false;
     
     uint32_t i = 0;
-    boolean result = true;
+    bool result = true;
     
     #ifdef DEBUG_TRACE
         Serial.println("Start erasing device");
@@ -744,7 +744,7 @@ void FRAM_MB85RS_SPI::_csRELEASE()
 ///     @return  0: error
 ///              1: ok
 **/
-boolean FRAM_MB85RS_SPI::_getDeviceID()
+bool FRAM_MB85RS_SPI::_getDeviceID()
 {
 	uint8_t buffer[3] = { 0, 0, 0 };
     
@@ -803,7 +803,7 @@ boolean FRAM_MB85RS_SPI::_getDeviceID()
 ///     @return  0: error, no DEBUG_TRACE available
 ///              1: ok, print out all the datas
 **/
-boolean FRAM_MB85RS_SPI::_deviceID2Serial()
+bool FRAM_MB85RS_SPI::_deviceID2Serial()
 {
     if (!Serial)
         return false; // Serial not available
@@ -840,4 +840,3 @@ void FRAM_MB85RS_SPI::_sendAddr( uint32_t framAddr )
     SPI.transfer((framAddr >> 8) & 0xFF);       // Bits 8 to 15
     SPI.transfer((framAddr     ) & 0xFF);       // Bits 0 to 7,   LSB
 }
-
