@@ -63,7 +63,7 @@ class FRAM_MB85RS
     // IDs - can be extends to any other compatible chip
     static constexpr uint8_t FUJITSU_ID = 0x04;
 
-    // Density codes gives the memory's adressing scheme
+    // Density codes gives the memory's adressing scheme (number of bits)
     static constexpr uint8_t DENSITY_MB85RS64   = 0x03; // 64K
     static constexpr uint8_t DENSITY_MB85RS128  = 0x04; // 128K
     static constexpr uint8_t DENSITY_MB85RS256  = 0x05; // 256K
@@ -126,7 +126,7 @@ class FRAM_MB85RS
     uint16_t    _productID;     // Product ID
     uint8_t     _densitycode;   // Code which represent the size of the chip
     uint16_t    _density;       // Human readable size of F-RAM chip
-    uint32_t    _maxaddress;    // Maximum address suported by F-RAM chip
+    uint32_t    _size;          // Size of F-RAM chip in bytes
     uint32_t    _lastaddress;   // Last address used in memory
 
     void        _csCONFIG();

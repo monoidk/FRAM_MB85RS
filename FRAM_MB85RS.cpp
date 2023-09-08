@@ -157,7 +157,7 @@ bool FRAM_MB85RS::identify()
 {
     bool result = _getDeviceID();
 
-    if (result && _manufacturer == FUJITSU_ID && _maxaddress != 0) {
+    if (result && _manufacturer == FUJITSU_ID && _size != 0) {
         _framInitialised = true;
         return true;
     }
@@ -180,8 +180,8 @@ bool FRAM_MB85RS::identify()
 **/
 bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 {
-    if ( addr >= _maxaddress
-        || ((addr + size - 1) >= _maxaddress)
+    if ( addr >= _size
+        || ((addr + size - 1) >= _size)
         || size == 0
         || !_framInitialised )
         return false;
@@ -223,8 +223,8 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 **/
 bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 {
-    if ( addr >= _maxaddress
-        || ((addr + size - 1) >= _maxaddress)
+    if ( addr >= _size
+        || ((addr + size - 1) >= _size)
         || size == 0
         || !_framInitialised )
         return false;
@@ -342,7 +342,7 @@ bool FRAM_MB85RS::eraseChip()
     Serial.println("Start erasing device");
 #endif
 
-    while( i < _maxaddress && result )
+    while( i < _size && result )
         result = write(i++, (uint8_t)0);
 
 #ifdef DEBUG_TRACE
@@ -354,7 +354,7 @@ bool FRAM_MB85RS::eraseChip()
     Serial.println("Device erased!");
 #endif
 
-    _lastaddress = _maxaddress;
+    _lastaddress = _size;
 
     return result;
 }
@@ -363,11 +363,11 @@ bool FRAM_MB85RS::eraseChip()
 /*!
 ///    @brief   getMaxMemAdr()
 ///             Return the maximum memory address available
-///    @return  _maxaddress
+///    @return  _size
 **/
 uint32_t FRAM_MB85RS::getMaxMemAdr()
 {
-    return _maxaddress;
+    return _size;
 }
 
 
@@ -439,7 +439,7 @@ void FRAM_MB85RS::_spi_end()
 ///              _densitycode: Memory density (bytes 5..0)
 ///                            from 0x03 (64K chip) to 0x08 (2M chip)
 ///              _density: Human readable memory density, from 64 to 1024K
-///              _maxaddress: The memory max address of storage slot
+///              _size: The memory max address of storage slot
 ///     @return  0: error
 ///              1: ok
 **/
@@ -483,7 +483,7 @@ bool FRAM_MB85RS::_getDeviceID()
         _density = 0;
         return false;
     }
-    _maxaddress = _density*128;
+    _size = _density*128;
     return true;
 }
 
@@ -507,7 +507,7 @@ bool FRAM_MB85RS::_deviceID2Serial()
     Serial.print("ProductID 0x"); Serial.println(_productID, HEX);
     Serial.print("Density code 0x"); Serial.print(_densitycode, HEX);
     Serial.print(", Chip density "); Serial.print(_density, DEC); Serial.println("KBits");
-    Serial.print("Max address : 0 to "); Serial.print(_maxaddress-1, DEC); Serial.print(" / "); Serial.println(_maxaddress-1, HEX);
+    Serial.print("Max address : 0 to "); Serial.print(_size-1, DEC); Serial.print(" / "); Serial.println(_size-1, HEX);
     Serial.println("Device identfied automatically");
 #else
     return false;
