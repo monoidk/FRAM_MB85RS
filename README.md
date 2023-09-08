@@ -3,7 +3,7 @@ Arduino library for SPI FRAM - Fujitsu MB85RS
 
 SPI Ferroelectric Random Access Memory (FRAM). Read/write endurance for each memory slot : 10^13 cycles and more.
 Supports 64K, 128K, 256K, 512K, 1M and 2M chips.
-These memories chips can work up to 25MHz in SPI Mode 0 or Mode 3.
+Some of these memories chips can work up to 25MHz in SPI Mode 0 or Mode 3.
 
 ## Features ##
 - Device settings detection (if Device ID feature is available)
@@ -35,6 +35,7 @@ Please note when you activate DEBUG_TRACE & CHIP_TRACE in .h the performances ar
 |  Model | Density (kB) | Device ID feature | Density code | Memory addressing | Tested |
 |  ------ | :------: | :------: | :------: | :------: | :------: |
 |  **MB85RS64V** | 64 | Yes | 0x03 | 16 bits | No |
+|  **MB85RS64T** | 64 | Yes | 0x03 | 16 bits | Yes |
 |  **MB85RS128B** | 128 | Yes | 0x04 | 16 bits | No |
 |  **MB85RS256B** | 256 | Yes | 0x05 | 16 bits | No |
 |  **MB85RS512T** | 512 | Yes | 0x06 | 16 bits | No |
@@ -64,12 +65,14 @@ Close to the complete release...
 
 ## Testing ##
 
-I only own 1Mbit chips, so if anybody can test all the other chips...
+Christophe Persoz owns 1Mbit chips, that he presumably tested.
+I use MB85RS64T 64kBit chips, that seem to worok.
 This library has been developped to work on ARM Teensy 3.2, 3.5 and above.
 It should be works on Arduino too, but I won't test it.
 
 
 ## Credits ##
+- Christophe Persoz wrote initial SPI version of this library that I forked (https://github.com/christophepersoz/FRAM_MB85RS_SPI)
 - Sosandroid who wrote the I2C version of this library that I forked for SPI (https://github.com/sosandroid/FRAM_MB85RC_I2C)
 - [Kevin Townsend](https://github.com/microbuilder) wrote the very first [Adafruit Lib](https://github.com/adafruit/Adafruit_FRAM_I2C) of which this one is forked.
 - All testers who helped to improve this library
