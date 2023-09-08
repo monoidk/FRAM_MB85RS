@@ -98,18 +98,31 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
 
 
 /*!
-///     @brief   init()
-///              Inititalize the F-RAM chip
-///              Note: we do not initialize SPI
-///     @return  if DEBUG_TRACE, provides all the informations on the chip
+///     @brief   begin_tree()
+///              Initialize the CS pin and SPI bus, then
+///              Inititalize the F-RAM chip - detect model and size
 **/
-void FRAM_MB85RS::init()
+void FRAM_MB85RS::begin_tree()
 {
     _csCONFIG();
-    digitalWriteFast(_cs, HIGH);
-    delay(50);
+    _spi->begin();
+    begin();
+}
 
-    bool deviceFound = checkDevice();
+
+
+/*!
+///     @brief   begin()
+///              Inititalize the F-RAM chip - detect model and size
+///              Note: we do not initialize SPI nor the CS pin
+///     @return  if DEBUG_TRACE, provides all the informations on the chip
+**/
+void FRAM_MB85RS::begin()
+{
+    digitalWriteFast(_cs, HIGH);
+    delayMicroseconds(1);
+
+    bool deviceFound = identify();
     
 #if defined(DEBUG_TRACE) || defined(CHIP_TRACE)
     if (!Serial)
@@ -136,12 +149,12 @@ void FRAM_MB85RS::init()
 
 
 /*!
-///     @brief   checkDevice()
+///     @brief   identify()
 ///              Check if the device is connected
 ///     @return  0: device not found
 ///              1: device connected
 **/
-bool FRAM_MB85RS::checkDevice()
+bool FRAM_MB85RS::identify()
 {
 	bool result = _getDeviceID();
   

@@ -93,8 +93,9 @@ class FRAM_MB85RS
     FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp);
     
 
-    void	init();
-    bool	checkDevice();
+    void        begin_tree();
+    void        begin();
+    bool        identify();
     
     bool	read(uint32_t framAddr, uint8_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
     bool	read(uint32_t framAddr, uint16_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
