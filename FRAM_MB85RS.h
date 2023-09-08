@@ -47,14 +47,9 @@
 #include <SPI.h>
 
 
-// DEFINES
-
-#ifndef DEBUG_TRACE
-    #define DEBUG_TRACE    // Enabling Debug Trace on Serial
-#endif
-#ifndef CHIP_TRACE
-    #define CHIP_TRACE     // Serial trace for characteristics of the chip
-#endif
+// DEFINES for debug:
+// #define DEBUG_TRACE    // Enable Debug Trace on Serial
+// #define CHIP_TRACE     // Serial trace for characteristics of the chip
 
 
 // Managing Write protect pin
