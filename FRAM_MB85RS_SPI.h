@@ -94,15 +94,16 @@ class FRAM_MB85RS_SPI
     void	init();
     bool	checkDevice();
     
-    bool	read(uint32_t framAddr, uint8_t *value);
-    bool	read(uint32_t framAddr, uint16_t *value);
-    bool	read(uint32_t framAddr, uint32_t *value);
+    bool	read(uint32_t framAddr, uint8_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
+    bool	read(uint32_t framAddr, uint16_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
+    bool	read(uint32_t framAddr, uint32_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
     bool	write(uint32_t framAddr, uint8_t value);
     bool	write(uint32_t framAddr, uint16_t value);
     bool	write(uint32_t framAddr, uint32_t value);
     
-    bool	readArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
-    bool	readArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
+    bool	readBuf(uint32_t addr, void * buf, uint32_t size);
+    bool	readArray(uint32_t startAddr, uint8_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems); }
+    bool	readArray(uint32_t startAddr, uint16_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems * 2); }
     bool	writeArray(uint32_t startAddr, uint8_t values[], size_t nbItems );
     bool	writeArray(uint32_t startAddr, uint16_t values[], size_t nbItems );
     

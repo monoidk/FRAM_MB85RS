@@ -157,111 +157,6 @@ bool FRAM_MB85RS_SPI::checkDevice()
 
 
 /*!
-///     @brief   read()
-///              Read a 8-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 8-bits value to read
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint8_t *value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-//#ifdef DEBUG_TRACE
-//    Serial.print("Read address : ");
-//    Serial.println(framAddr, BIN);
-//#endif
-    
-    _csASSERT();
-        // Read byte operation
-        SPI.transfer(FRAM_READ);
-        _sendAddr(framAddr);
-        // Read value
-        *value = SPI.transfer(0);
-    _csRELEASE();
-    
-    _lastaddress = framAddr+1;
-    
-    return true;
-}
-
-
-
-/*!
-///     @brief   read()
-///              Read a 16-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 16-bits value to read
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-    uint8_t buffer[2];
-    
-    _csASSERT();
-        // Read byte operation
-        SPI.transfer(FRAM_READ);
-        _sendAddr(framAddr);
-        // Read value
-        buffer[0] = SPI.transfer(0);
-        buffer[1] = SPI.transfer(0);
-    _csRELEASE();
-    
-    *value = (((uint16_t)buffer[1] << 8) |
-              ((uint16_t)buffer[0]     ));
-    
-    _lastaddress = framAddr+2;
-    
-    return true;
-}
-
-
-
-/*!
-///     @brief   read()
-///              Read a 32-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 32-bits value to read
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-    uint8_t buffer[4];
-    
-    _csASSERT();
-        // Read byte operation
-        SPI.transfer(FRAM_READ);
-        _sendAddr(framAddr);
-        // Read value
-        buffer[0] = SPI.transfer(0);
-        buffer[1] = SPI.transfer(0);
-        buffer[2] = SPI.transfer(0);
-        buffer[3] = SPI.transfer(0);
-    _csRELEASE();
-   
-    *value = (((uint32_t)buffer[3] << 24) |
-              ((uint32_t)buffer[2] << 16) |
-              ((uint32_t)buffer[1] <<  8) |
-              ((uint32_t)buffer[0]      ));
-    
-    _lastaddress = framAddr+4;
-    
-    return true;
-}
-
-
-
-/*!
 ///     @brief   write()
 ///              Write a 8-bits value to the specified F-RAM address
 ///     @param   framAddr, the memory address on 32-bits
@@ -380,87 +275,43 @@ bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
 
 
 /*!
-///     @brief   readArray()
+///     @brief   readBuf()
 ///              Read an array made of 8-bits values from the specified F-RAM address
-///     @param   framAddr, the memory address to read from
-///     @param   values[], the array of 8-bits value to read
-///     @param   nb, the number of elements to read
+///     @param   addr, the memory address to read from
+///     @param   buf, the array of 8-bits value to read
+///     @param   size, the number of elements to read
 ///     @return  0: error
 ///              1: ok
 ///     @note    F-RAM provide a continuous reading with auto-increment of the address
 **/
-bool FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::readBuf(uint32_t addr, void * buf, uint32_t size)
 {
-    if ( startAddr >= _maxaddress
-        || ((startAddr + nbItems - 1) >= _maxaddress)
-        || nbItems == 0
+    if ( addr >= _maxaddress
+        || ((addr + size - 1) >= _maxaddress)
+        || size == 0
         || !_framInitialised )
         return false;
+
+    uint8_t * mem = (uint8_t *) buf;
     
     _csASSERT();
     // Read byte operation
     SPI.transfer(FRAM_READ);
-    _sendAddr(startAddr);
+    _sendAddr(addr);
     
     // Read values
-    for (uint32_t i = 0; i < nbItems; i++)
+    for (uint32_t i = 0; i < size; ++i)
     {
-        values[i] = SPI.transfer(0);
+        mem[i] = SPI.transfer(0);
 #ifdef DEBUG_TRACE
-        Serial.print("Adr 0x"); Serial.print(startAddr+i, HEX);
-        Serial.print(", Value[");Serial.print(i); Serial.print("] = 0x"); Serial.println(values[i], HEX);
+        Serial.print("Adr 0x"); Serial.print(addr+i, HEX);
+        Serial.print(", Value[");Serial.print(i); Serial.print("] = 0x"); Serial.println(mem[i], HEX);
 #endif
     }
     
     _csRELEASE();
     
-    _lastaddress = startAddr + nbItems - 1;
-    
-    return true;
-}
-
-
-
-/*!
- ///     @brief   readArray()
- ///              Read an array made of 16-bits values from the specified F-RAM address
- ///     @param   framAddr, the memory address to read from
- ///     @param   values[], the array of 16-bits value to read
- ///     @param   nb, the number of elements to read
- ///     @return  0: error
- ///              1: ok
- ///     @note    F-RAM provide a continuous reading with auto-increment of the address
- **/
-bool FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
-{
-    if ( startAddr >= _maxaddress
-        || ((startAddr + (nbItems*2) - 2) >= _maxaddress)
-        || nbItems == 0
-        || !_framInitialised )
-        return false;
-    
-    uint8_t buffer[2];
-    
-    _csASSERT();
-        // Read byte operation
-        SPI.transfer(FRAM_READ);
-        _sendAddr(startAddr);
-        
-        // Read values
-        for (uint32_t i = 0; i < nbItems; i++)
-        {
-            buffer[0] = SPI.transfer(0);
-            buffer[1] = SPI.transfer(0);
-            values[i] = ((uint16_t) buffer[1] << 8) + (uint16_t)buffer[0];
-            
-#ifdef DEBUG_TRACE
-            Serial.print("Adr 0x"); Serial.print(startAddr+(i*2), HEX);
-            Serial.print(", Value[");Serial.print(i); Serial.print("] = 0x"); Serial.println(values[i], HEX);
-#endif
-        }
-    _csRELEASE();
-    
-    _lastaddress = startAddr + (nbItems*2) - 2;
+    _lastaddress = addr + size - 1;
     
     return true;
 }
