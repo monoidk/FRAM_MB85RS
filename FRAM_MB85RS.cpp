@@ -67,7 +67,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs)
     _wp = false; // No WP pin connected, WP management inactive
     
     _csCONFIG();
-    _csRELEASE();
+    _spi_end();
     delay(50);
     
     _framInitialised = false;
@@ -92,7 +92,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
     DEFAULT_WP_STATUS ? enableWP() : disableWP();
     
     _csCONFIG();
-    _csRELEASE();
+    _spi_end();
     delay(50);
     
     _framInitialised = false;
@@ -181,7 +181,7 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 
     uint8_t * mem = (uint8_t *) buf;
     
-    _csASSERT();
+    _spi_begin();
     // Read byte operation
     _spi->transfer(FRAM_READ);
     _sendAddr(addr);
@@ -196,7 +196,7 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 #endif
     }
     
-    _csRELEASE();
+    _spi_end();
     
     _lastaddress = addr + size - 1;
     
@@ -226,23 +226,23 @@ bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
     const uint8_t * mem = (const uint8_t *) buf;
 
     // Set Memory Write Enable Latch
-    _csASSERT();
+    _spi_begin();
         _spi->transfer(FRAM_WREN);
-    _csRELEASE();
+    _spi_end();
     
     // Write byte operation
-    _csASSERT();
+    _spi_begin();
         _spi->transfer(FRAM_WRITE);
         _sendAddr(addr);
         // Write values
         for (uint32_t i = 0; i < size; ++i)
             _spi->transfer(mem[i]);
-    _csRELEASE();
+    _spi_end();
     
     // Reset Memory Write Enable Latch
-    _csASSERT();
+    _spi_begin();
         _spi->transfer(FRAM_WRDI);
-    _csRELEASE();
+    _spi_end();
     
     _lastaddress = addr + size - 1;
     
@@ -403,11 +403,11 @@ void FRAM_MB85RS::_csCONFIG()
 
 
 /*!
-///     @brief   _csASSERT()
+///     @brief   _spi_begin()
 ///              initialize SPI transactionnal mode and set the chip select
 ///              line as active for data transmission/reception
 **/
-void FRAM_MB85RS::_csASSERT()
+void FRAM_MB85RS::_spi_begin()
 {
     _spi->beginTransaction(spiSettings);
     digitalWriteFast(_cs, LOW);
@@ -416,10 +416,10 @@ void FRAM_MB85RS::_csASSERT()
 
 
 /*!
-///     @brief   _csRELEASE(), ends SPI transactionnal mode
+///     @brief   _spi_end(), ends SPI transactionnal mode
 ///              and set the chip select line inactive
 **/
-void FRAM_MB85RS::_csRELEASE()
+void FRAM_MB85RS::_spi_end()
 {
     digitalWriteFast(_cs, HIGH);
     _spi->endTransaction();
@@ -444,7 +444,7 @@ bool FRAM_MB85RS::_getDeviceID()
 {
 	uint8_t buffer[3] = { 0, 0, 0 };
     
-    _csASSERT();
+    _spi_begin();
     
     _spi->transfer(FRAM_RDID);
     _manufacturer = _spi->transfer(0);
@@ -452,7 +452,7 @@ bool FRAM_MB85RS::_getDeviceID()
     buffer[1] = _spi->transfer(0);
     buffer[2] = _spi->transfer(0);
     
-    _csRELEASE();
+    _spi_end();
 
 	/* Shift values to separate IDs */
 	_densitycode = buffer[1] &= (1<<5)-1; // Only the 5 first bits

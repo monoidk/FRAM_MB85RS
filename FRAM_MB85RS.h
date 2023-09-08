@@ -134,8 +134,8 @@ class FRAM_MB85RS
     uint32_t    _lastaddress;   // Last address used in memory
     
     void        _csCONFIG();
-    void        _csASSERT();
-    void        _csRELEASE();
+    void        _spi_begin();
+    void        _spi_end();
     bool        _getDeviceID();
     bool        _deviceID2Serial();
     void        _sendAddr(uint32_t framAddr);
