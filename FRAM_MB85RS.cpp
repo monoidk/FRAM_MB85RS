@@ -67,7 +67,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs)
     _wp = false; // No WP pin connected, WP management inactive
     
     _csCONFIG();
-    _spi_end();
+    digitalWriteFast(_cs, HIGH);
     delay(50);
     
     _framInitialised = false;
@@ -92,7 +92,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
     DEFAULT_WP_STATUS ? enableWP() : disableWP();
     
     _csCONFIG();
-    _spi_end();
+    digitalWriteFast(_cs, HIGH);
     delay(50);
     
     _framInitialised = false;
