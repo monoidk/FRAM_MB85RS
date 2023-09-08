@@ -1,12 +1,13 @@
 /**************************************************************************/
 /*! 
     @file     FRAM_MB85RS_SPI.h
-    @author   Christophe Persoz for SPI version
+    @author   Ivan Labáth
+              Christophe Persoz for SPI version
               SOSAndroid.fr (E. Ha.) for I2C version
 	
     @section  HISTORY
 
-    v0.7 - See ReadMe for more informations
+    v0.8 - See ReadMe for more informations
     
     Driver for the MB85RC SPI FRAM from Fujitsu.
 	

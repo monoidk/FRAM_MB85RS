@@ -1,13 +1,19 @@
 /**************************************************************************/
 /*!
     @file     FRAM_MB85RS_SPI.cpp
-    @author   Christophe Persoz
+    @author   Ivan Labáth
+              Christophe Persoz
     @license  BSD (see license.txt)
 
     Driver for the MB85RS SPI FRAM series from Fujitsu.
 
     @section  HISTORY
 
+    v0.8
+      - use generic read/write
+        Note: all data now native endian
+      - fix memory addressing
+      - fix 32-bit read
     v0.7 - See ReadMe for more informations
  
     @section LICENSE
