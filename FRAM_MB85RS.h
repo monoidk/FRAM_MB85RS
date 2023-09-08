@@ -129,7 +129,6 @@ class FRAM_MB85RS
     uint32_t    _size;          // Size of F-RAM chip in bytes
     uint32_t    _lastaddress;   // Last address used in memory
 
-    void        _csCONFIG();
     void        _spi_begin();
     void        _spi_end();
     bool        _getDeviceID();

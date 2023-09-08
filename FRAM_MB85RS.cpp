@@ -104,7 +104,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
 **/
 void FRAM_MB85RS::begin_tree()
 {
-    _csCONFIG();
+    pinMode(_cs, OUTPUT);
     _spi->begin();
     begin();
 }
@@ -392,17 +392,6 @@ uint32_t FRAM_MB85RS::getLastMemAdr()
 /*========================================================================*/
 /*                           PRIVATE FUNCTIONS                            */
 /*========================================================================*/
-
-
-/*!
-///     @brief   _csCONFIG()
-///              initialize the chip select line
-**/
-void FRAM_MB85RS::_csCONFIG()
-{
-    pinMode(_cs, OUTPUT);
-}
-
 
 
 /*!
