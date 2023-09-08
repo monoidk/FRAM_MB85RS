@@ -1,16 +1,16 @@
 /**************************************************************************/
-/*! 
+/*
     @file     FRAM_MB85RS.h
     @author   Ivan Labáth
               Christophe Persoz for SPI version
               SOSAndroid.fr (E. Ha.) for I2C version
-	
+
     @section  HISTORY
 
     v0.8 - See ReadMe for more informations
-    
+
     Driver for the MB85RC SPI FRAM from Fujitsu.
-	
+
     @section LICENSE
 
     Software License Agreement (BSD License)
@@ -69,12 +69,12 @@ class FRAM_MB85RS
     static constexpr uint8_t FUJITSU_ID = 0x04;
 
     // Density codes gives the memory's adressing scheme
-    static constexpr uint8_t DENSITY_MB85RS64V  = 0x03;	// 64K
-    static constexpr uint8_t DENSITY_MB85RS128B = 0x04;	// 128K
-    static constexpr uint8_t DENSITY_MB85RS256B = 0x05;	// 256K
-    static constexpr uint8_t DENSITY_MB85RS512T = 0x06;	// 512K
-    static constexpr uint8_t DENSITY_MB85RS1MT  = 0x07;	// 1M
-    static constexpr uint8_t DENSITY_MB85RS2MT  = 0x08;	// 2M
+    static constexpr uint8_t DENSITY_MB85RS64V  = 0x03; // 64K
+    static constexpr uint8_t DENSITY_MB85RS128B = 0x04; // 128K
+    static constexpr uint8_t DENSITY_MB85RS256B = 0x05; // 256K
+    static constexpr uint8_t DENSITY_MB85RS512T = 0x06; // 512K
+    static constexpr uint8_t DENSITY_MB85RS1MT  = 0x07; // 1M
+    static constexpr uint8_t DENSITY_MB85RS2MT  = 0x08; // 2M
 
     // OP-CODES
     static constexpr uint8_t FRAM_WRSR  = 0x01; // 0000 0001 - Write Status Register
@@ -91,49 +91,49 @@ class FRAM_MB85RS
  public:
     FRAM_MB85RS(SPIClass & spi, uint8_t cs);
     FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp);
-    
 
-    void        begin_tree();
-    void        begin();
-    bool        identify();
-    
-    bool	read(uint32_t framAddr, uint8_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
-    bool	read(uint32_t framAddr, uint16_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
-    bool	read(uint32_t framAddr, uint32_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
-    bool	write(uint32_t framAddr, uint8_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
-    bool	write(uint32_t framAddr, uint16_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
-    bool	write(uint32_t framAddr, uint32_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
-    
-    bool	readBuf(uint32_t addr, void * buf, uint32_t size);
-    bool	readArray(uint32_t startAddr, uint8_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems); }
-    bool	readArray(uint32_t startAddr, uint16_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems * 2); }
-    bool	writeBuf(uint32_t addr, const void * buf, uint32_t size);
-    bool	writeArray(uint32_t startAddr, uint8_t values[], size_t nbItems ) { return writeBuf(startAddr, values, nbItems); }
-    bool	writeArray(uint32_t startAddr, uint16_t values[], size_t nbItems ) {return writeBuf(startAddr, values, nbItems * 2); }
-    
-    bool	isAvailable();
-    bool	getWPStatus();
-    bool	enableWP();
-    bool	disableWP();
-    bool	eraseChip();
+
+    void begin_tree();
+    void begin();
+    bool identify();
+
+    bool read(uint32_t framAddr, uint8_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
+    bool read(uint32_t framAddr, uint16_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
+    bool read(uint32_t framAddr, uint32_t *value) { return readBuf(framAddr, value, sizeof(*value)); }
+    bool write(uint32_t framAddr, uint8_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
+    bool write(uint32_t framAddr, uint16_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
+    bool write(uint32_t framAddr, uint32_t value) { return writeBuf(framAddr, &value, sizeof(value)); }
+
+    bool readBuf(uint32_t addr, void * buf, uint32_t size);
+    bool readArray(uint32_t startAddr, uint8_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems); }
+    bool readArray(uint32_t startAddr, uint16_t values[], size_t nbItems ) { return readBuf(startAddr, values, nbItems * 2); }
+    bool writeBuf(uint32_t addr, const void * buf, uint32_t size);
+    bool writeArray(uint32_t startAddr, uint8_t values[], size_t nbItems ) { return writeBuf(startAddr, values, nbItems); }
+    bool writeArray(uint32_t startAddr, uint16_t values[], size_t nbItems ) {return writeBuf(startAddr, values, nbItems * 2); }
+
+    bool isAvailable();
+    bool getWPStatus();
+    bool enableWP();
+    bool disableWP();
+    bool eraseChip();
     uint32_t getMaxMemAdr();
     uint32_t getLastMemAdr();
-    
-    
+
+
  private:
     SPIClass *  _spi;
-    bool		_framInitialised;
+    bool                _framInitialised;
     uint8_t     _cs;            // CS pin
-    bool	_wp;            // WP management
+    bool        _wp;            // WP management
     uint8_t     _wpPin;         // WP pin connected and Write Protection enabled
-    bool	_wpStatus;      // WP Status
+    bool        _wpStatus;      // WP Status
     uint8_t     _manufacturer;  // Manufacturer ID
-    uint16_t	_productID;     // Product ID
+    uint16_t    _productID;     // Product ID
     uint8_t     _densitycode;   // Code which represent the size of the chip
-    uint16_t	_density;       // Human readable size of F-RAM chip
-    uint32_t	_maxaddress;    // Maximum address suported by F-RAM chip
+    uint16_t    _density;       // Human readable size of F-RAM chip
+    uint32_t    _maxaddress;    // Maximum address suported by F-RAM chip
     uint32_t    _lastaddress;   // Last address used in memory
-    
+
     void        _csCONFIG();
     void        _spi_begin();
     void        _spi_end();

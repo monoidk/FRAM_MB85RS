@@ -15,7 +15,7 @@
       - fix memory addressing
       - fix 32-bit read
     v0.7 - See ReadMe for more informations
- 
+
     @section LICENSE
 
     Software License Agreement (BSD License)
@@ -65,7 +65,7 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs)
     _spi = &spi;
     _cs = cs;
     _wp = false; // No WP pin connected, WP management inactive
-    
+
     _framInitialised = false;
 }
 
@@ -83,10 +83,10 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
 
     _wp = true; // WP pin connected and Write Protection enabled
     _wpPin = wp;
-    
+
     // The init WP management status is define under DEFAULT_WP_STATUS
     DEFAULT_WP_STATUS ? enableWP() : disableWP();
-    
+
     _framInitialised = false;
 }
 
@@ -123,21 +123,20 @@ void FRAM_MB85RS::begin()
     delayMicroseconds(1);
 
     bool deviceFound = identify();
-    
+
 #if defined(DEBUG_TRACE) || defined(CHIP_TRACE)
     if (!Serial)
         Serial.begin(115200);
     while (!Serial) {}
-    
+
     Serial.println("FRAM_MB85RS created\n");
     Serial.print("Write protect management: ");
     if (_wp)
         Serial.println("active");
     else
         Serial.println("inactive");
-    
-    if (deviceFound)
-    {
+
+    if (deviceFound) {
         Serial.println("Memory Chip initialized");
         _deviceID2Serial();
     }
@@ -156,14 +155,13 @@ void FRAM_MB85RS::begin()
 **/
 bool FRAM_MB85RS::identify()
 {
-	bool result = _getDeviceID();
-  
-	if (result && _manufacturer == FUJITSU_ID && _maxaddress != 0)
-    {
-		_framInitialised = true;
+    bool result = _getDeviceID();
+
+    if (result && _manufacturer == FUJITSU_ID && _maxaddress != 0) {
+        _framInitialised = true;
         return true;
-	}
-    
+    }
+
     _framInitialised = false;
     return false;
 }
@@ -189,26 +187,25 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
         return false;
 
     uint8_t * mem = (uint8_t *) buf;
-    
+
     _spi_begin();
     // Read byte operation
     _spi->transfer(FRAM_READ);
     _sendAddr(addr);
-    
+
     // Read values
-    for (uint32_t i = 0; i < size; ++i)
-    {
+    for (uint32_t i = 0; i < size; ++i) {
         mem[i] = _spi->transfer(0);
 #ifdef DEBUG_TRACE
         Serial.print("Adr 0x"); Serial.print(addr+i, HEX);
         Serial.print(", Value[");Serial.print(i); Serial.print("] = 0x"); Serial.println(mem[i], HEX);
 #endif
     }
-    
+
     _spi_end();
-    
+
     _lastaddress = addr + size - 1;
-    
+
     return true;
 }
 
@@ -231,14 +228,14 @@ bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
         || size == 0
         || !_framInitialised )
         return false;
-    
+
     const uint8_t * mem = (const uint8_t *) buf;
 
     // Set Memory Write Enable Latch
     _spi_begin();
         _spi->transfer(FRAM_WREN);
     _spi_end();
-    
+
     // Write byte operation
     _spi_begin();
         _spi->transfer(FRAM_WRITE);
@@ -247,14 +244,14 @@ bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
         for (uint32_t i = 0; i < size; ++i)
             _spi->transfer(mem[i]);
     _spi_end();
-    
+
     // Reset Memory Write Enable Latch
     _spi_begin();
         _spi->transfer(FRAM_WRDI);
     _spi_end();
-    
+
     _lastaddress = addr + size - 1;
-    
+
     return true;
 }
 
@@ -268,9 +265,9 @@ bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 **/
 bool FRAM_MB85RS::isAvailable()
 {
-	if ( _framInitialised && digitalReadFast(_cs) == HIGH )
+    if ( _framInitialised && digitalReadFast(_cs) == HIGH )
         return true;
-    
+
     return false;
 }
 
@@ -284,7 +281,7 @@ bool FRAM_MB85RS::isAvailable()
 **/
 bool FRAM_MB85RS::getWPStatus()
 {
-	return _wpStatus;
+    return _wpStatus;
 }
 
 
@@ -297,13 +294,12 @@ bool FRAM_MB85RS::getWPStatus()
 **/
 bool FRAM_MB85RS::enableWP(void)
 {
-	if (_wp)
-    {
-		digitalWriteFast(_wpPin,HIGH);
-		_wpStatus = true;
+    if (_wp) {
+        digitalWriteFast(_wpPin,HIGH);
+        _wpStatus = true;
         return true;
-	}
-    
+    }
+
     return false;
 }
 
@@ -317,13 +313,12 @@ bool FRAM_MB85RS::enableWP(void)
 **/
 bool FRAM_MB85RS::disableWP()
 {
-	if (_wp)
-    {
-		digitalWriteFast(_wpPin,LOW);
-		_wpStatus = false;
+    if (_wp) {
+        digitalWriteFast(_wpPin,LOW);
+        _wpStatus = false;
         return true;
-	}
-    
+    }
+
     return false;
 }
 
@@ -339,29 +334,28 @@ bool FRAM_MB85RS::eraseChip()
 {
     if ( !_framInitialised )
         return false;
-    
+
     uint32_t i = 0;
     bool result = true;
-    
-    #ifdef DEBUG_TRACE
-        Serial.println("Start erasing device");
-    #endif
-    
+
+#ifdef DEBUG_TRACE
+    Serial.println("Start erasing device");
+#endif
+
     while( i < _maxaddress && result )
         result = write(i++, (uint8_t)0);
-    
-    #ifdef DEBUG_TRACE
-        if ( !result )
-        {
-            Serial.print("ERROR: Device erasing stopped at position ");
-            Serial.println(i-1, DEC);
-        } else
-            Serial.print("Erased from address 0x00 to 0x"); Serial.println(i-1, HEX);
-            Serial.println("Device erased!");
-    #endif
-    
+
+#ifdef DEBUG_TRACE
+    if ( !result ) {
+        Serial.print("ERROR: Device erasing stopped at position ");
+        Serial.println(i-1, DEC);
+    } else
+        Serial.print("Erased from address 0x00 to 0x"); Serial.println(i-1, HEX);
+    Serial.println("Device erased!");
+#endif
+
     _lastaddress = _maxaddress;
-    
+
     return result;
 }
 
@@ -451,26 +445,24 @@ void FRAM_MB85RS::_spi_end()
 **/
 bool FRAM_MB85RS::_getDeviceID()
 {
-	uint8_t buffer[3] = { 0, 0, 0 };
-    
+    uint8_t buffer[3] = { 0, 0, 0 };
+
     _spi_begin();
-    
+
     _spi->transfer(FRAM_RDID);
     _manufacturer = _spi->transfer(0);
     buffer[0] = _spi->transfer(0);
     buffer[1] = _spi->transfer(0);
     buffer[2] = _spi->transfer(0);
-    
+
     _spi_end();
 
-	/* Shift values to separate IDs */
-	_densitycode = buffer[1] &= (1<<5)-1; // Only the 5 first bits
-	_productID = (buffer[2] << 8) + buffer[3]; // Is really necessary to read this info ?
+    /* Shift values to separate IDs */
+    _densitycode = buffer[1] &= (1<<5)-1; // Only the 5 first bits
+    _productID = (buffer[2] << 8) + buffer[3]; // Is really necessary to read this info ?
 
-	if (_manufacturer == FUJITSU_ID)
-    {
-        switch (_densitycode)
-        {
+    if (_manufacturer == FUJITSU_ID) {
+        switch (_densitycode) {
             case DENSITY_MB85RS64V:
             case DENSITY_MB85RS128B:
             case DENSITY_MB85RS256B:
@@ -493,10 +485,9 @@ bool FRAM_MB85RS::_getDeviceID()
         _density = 0;
         _maxaddress = 0;
         return false;
-	}
-    
+    }
 
-  return true;
+    return true;
 }
 
 
@@ -512,21 +503,19 @@ bool FRAM_MB85RS::_deviceID2Serial()
 {
     if (!Serial)
         return false; // Serial not available
-    
-	#ifdef CHIP_TRACE
-        Serial.println("\n** F-RAM Device IDs");
-        Serial.print("Manufacturer 0x"); Serial.println(_manufacturer, HEX);
-        Serial.print("ProductID 0x"); Serial.println(_productID, HEX);
-        Serial.print("Density code 0x"); Serial.print(_densitycode, HEX);
-        Serial.print(", Chip density "); Serial.print(_density, DEC); Serial.println("KBits");
-        Serial.print("Max address : 0 to "); Serial.print(_maxaddress-1, DEC); Serial.print(" / "); Serial.println(_maxaddress-1, HEX);
-        Serial.println("Device identfied automatically");
-    #else
-        return false;
-    #endif
 
-    
-	return true;
+#ifdef CHIP_TRACE
+    Serial.println("\n** F-RAM Device IDs");
+    Serial.print("Manufacturer 0x"); Serial.println(_manufacturer, HEX);
+    Serial.print("ProductID 0x"); Serial.println(_productID, HEX);
+    Serial.print("Density code 0x"); Serial.print(_densitycode, HEX);
+    Serial.print(", Chip density "); Serial.print(_density, DEC); Serial.println("KBits");
+    Serial.print("Max address : 0 to "); Serial.print(_maxaddress-1, DEC); Serial.print(" / "); Serial.println(_maxaddress-1, HEX);
+    Serial.println("Device identfied automatically");
+#else
+    return false;
+#endif
+    return true;
 }
 
 
