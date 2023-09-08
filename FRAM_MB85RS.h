@@ -62,6 +62,7 @@ class FRAM_MB85RS
  private:
     // IDs - can be extends to any other compatible chip
     static constexpr uint8_t FUJITSU_ID = 0x04;
+    static constexpr uint8_t FUJITSU_CONT = 0x7f;
 
     // Density codes gives the memory's adressing scheme (number of bits)
     static constexpr uint8_t DENSITY_MB85RS64   = 0x03; // 64K

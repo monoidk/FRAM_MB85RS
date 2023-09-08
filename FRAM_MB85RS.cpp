@@ -435,7 +435,7 @@ void FRAM_MB85RS::_spi_end()
 ///              Reads the Manufacturer ID and the Product ID and populate
 ///              class' variables for devices supporting that feature.
 ///              _manufacturerID: The 8-bit manufacturer ID (Fujitsu = 0x04)
-///              _productID: seems useless
+///              _productID: diffrenetiates between e.g. MB85RS64T and MB85RS64V
 ///              _densitycode: Memory density (bytes 5..0)
 ///                            from 0x03 (64K chip) to 0x08 (2M chip)
 ///              _density: Human readable memory density, from 64 to 1024K
@@ -445,47 +445,27 @@ void FRAM_MB85RS::_spi_end()
 **/
 bool FRAM_MB85RS::_getDeviceID()
 {
-    uint8_t buffer[3] = { 0, 0, 0 };
-
     _spi_begin();
-
     _spi->transfer(FRAM_RDID);
     _manufacturer = _spi->transfer(0);
-    buffer[0] = _spi->transfer(0);
-    buffer[1] = _spi->transfer(0);
-    buffer[2] = _spi->transfer(0);
-
+    uint8_t manufacturer_cont = _spi->transfer(0);
+    uint8_t pid1 = _spi->transfer(0);
+    uint8_t pid2 = _spi->transfer(0);
     _spi_end();
 
     /* Shift values to separate IDs */
-    _densitycode = buffer[1] &= (1<<5)-1; // Only the 5 first bits
-    _productID = (buffer[2] << 8) + buffer[3]; // Is really necessary to read this info ?
+    _densitycode = pid1 & 0b0001'1111;
+    _productID = (((uint16_t) pid1) << 8) | pid2; // Is really necessary to read this info ?
 
     uint32_t density = 0;
-    if (_manufacturer == FUJITSU_ID) {
-        switch (_densitycode) {
-            case DENSITY_MB85RS64:
-            case DENSITY_MB85RS128:
-            case DENSITY_MB85RS256:
-            case DENSITY_MB85RS512:
-            case DENSITY_MB85RS1M:
-            case DENSITY_MB85RS2M:
-                density = 1 << (_densitycode + 3);
-                break;
-
-            default:
-                // F-RAM chip unidentified
-                density = 0;
-                return false;
-                break;
-        }
-    } else {
-        // F-RAM chip unidentified
-        density = 0;
-        return false;
+    if ((_manufacturer == FUJITSU_ID) &&
+        (manufacturer_cont == FUJITSU_CONT) &&
+        (_densitycode >= DENSITY_MB85RS64) &&
+        (_densitycode <= DENSITY_MB85RS2M)) {
+            density = 1 << (_densitycode + 3);
     }
     _size = density * (1024 / 8);
-    return true;
+    return (density > 0);
 }
 
 
