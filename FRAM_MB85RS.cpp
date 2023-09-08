@@ -409,7 +409,7 @@ void FRAM_MB85RS::_csCONFIG()
 **/
 void FRAM_MB85RS::_csASSERT()
 {
-    _spi->beginTransaction(SPICONFIG);
+    _spi->beginTransaction(spiSettings);
     digitalWriteFast(_cs, LOW);
 }
 

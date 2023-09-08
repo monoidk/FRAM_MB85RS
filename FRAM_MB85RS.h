@@ -49,7 +49,6 @@
 
 // DEFINES
 
-#define SPICONFIG   SPISettings(28000000, MSBFIRST, SPI_MODE0) // SPI frequency (24 MHz max), MODE 0
 #ifndef DEBUG_TRACE
     #define DEBUG_TRACE    // Enabling Debug Trace on Serial
 #endif
@@ -87,6 +86,8 @@ class FRAM_MB85RS
     static constexpr uint8_t FRAM_FSTRD = 0x0B; // 0000 1011 - Fast Read
     static constexpr uint8_t FRAM_RDID  = 0x9F; // 1001 1111 - Read Device ID
     static constexpr uint8_t FRAM_SLEEP = 0xB9; // 1011 1001 - Sleep mode
+
+    SPISettings spiSettings = SPISettings((uint32_t)10'000'000, MSBFIRST, SPI_MODE0);
  public:
     FRAM_MB85RS(SPIClass & spi, uint8_t cs);
     FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp);
