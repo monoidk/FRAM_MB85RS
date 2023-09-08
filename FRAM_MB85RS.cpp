@@ -66,10 +66,6 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs)
     _cs = cs;
     _wp = false; // No WP pin connected, WP management inactive
     
-    _csCONFIG();
-    digitalWriteFast(_cs, HIGH);
-    delay(50);
-    
     _framInitialised = false;
 }
 
@@ -91,10 +87,6 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
     // The init WP management status is define under DEFAULT_WP_STATUS
     DEFAULT_WP_STATUS ? enableWP() : disableWP();
     
-    _csCONFIG();
-    digitalWriteFast(_cs, HIGH);
-    delay(50);
-    
     _framInitialised = false;
 }
 
@@ -113,6 +105,10 @@ FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
 **/
 void FRAM_MB85RS::init()
 {
+    _csCONFIG();
+    digitalWriteFast(_cs, HIGH);
+    delay(50);
+
     bool deviceFound = checkDevice();
     
 #if defined(DEBUG_TRACE) || defined(CHIP_TRACE)
