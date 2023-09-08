@@ -181,7 +181,7 @@ bool FRAM_MB85RS::identify()
 bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 {
     if ( addr >= _size
-        || ((addr + size - 1) >= _size)
+        || ((addr + size) > _size)
         || size == 0
         || !_framInitialised )
         return false;
@@ -224,7 +224,7 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 {
     if ( addr >= _size
-        || ((addr + size - 1) >= _size)
+        || ((addr + size) > _size)
         || size == 0
         || !_framInitialised )
         return false;
