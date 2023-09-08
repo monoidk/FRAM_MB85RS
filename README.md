@@ -23,8 +23,10 @@ Some of these memories chips can work up to 25MHz in SPI Mode 0 or Mode 3.
 
 
 ## Revision History ##
-v0.8 - probably a working revision
-v0.7 - Working version with bugs
+
+ - v0.8 - probably a working revision (Note: storage incompatible with v0.7 from Christophe)
+ - v0.7 - Working version with bugs
+
 Please note, if you activate DEBUG_TRACE & CHIP_TRACE in .h the performances are slower than it should be. Serial trace takes times! Avoid the use of DEBUG_TRACE & CHIP_TRACE for a normal usage.
 
 ## Devices ##
