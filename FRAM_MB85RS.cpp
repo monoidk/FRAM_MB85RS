@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-    @file     FRAM_MB85RS_SPI.cpp
+    @file     FRAM_MB85RS.cpp
     @author   Ivan Labáth
               Christophe Persoz
     @license  BSD (see license.txt)
@@ -48,7 +48,7 @@
 /**************************************************************************/
 
 #include <SPI.h>
-#include <FRAM_MB85RS_SPI.h>
+#include <FRAM_MB85RS.h>
 
 /*========================================================================*/
 /*                            CONSTRUCTORS                                */
@@ -56,11 +56,11 @@
 
 
 /*!
-///     @brief   FRAM_MB85RS_SPI()
+///     @brief   FRAM_MB85RS()
 ///              Constructor without write protection management
 ///     @param   cs, chip select pin - active low
 **/
-FRAM_MB85RS_SPI::FRAM_MB85RS_SPI(uint8_t cs)
+FRAM_MB85RS::FRAM_MB85RS(uint8_t cs)
 {
     _cs = cs;
     _wp = false; // No WP pin connected, WP management inactive
@@ -75,12 +75,12 @@ FRAM_MB85RS_SPI::FRAM_MB85RS_SPI(uint8_t cs)
 
 
 /*!
-///     @brief   FRAM_MB85RS_SPI()
+///     @brief   FRAM_MB85RS()
 ///              Constructor with write protection pin
 ///     @param   cs, chip select pin - active low
 ///     @param   wp, write protected pin - active low
 **/
-FRAM_MB85RS_SPI::FRAM_MB85RS_SPI(uint8_t cs, uint8_t wp)
+FRAM_MB85RS::FRAM_MB85RS(uint8_t cs, uint8_t wp)
 {
     _cs = cs;
 
@@ -109,7 +109,7 @@ FRAM_MB85RS_SPI::FRAM_MB85RS_SPI(uint8_t cs, uint8_t wp)
 ///              Inititalize the F-RAM chip
 ///     @return  if DEBUG_TRACE, provides all the informations on the chip
 **/
-void FRAM_MB85RS_SPI::init()
+void FRAM_MB85RS::init()
 {
     SPISettings(SPICONFIG);
     SPI.begin();
@@ -121,7 +121,7 @@ void FRAM_MB85RS_SPI::init()
         Serial.begin(115200);
     while (!Serial) {}
     
-    Serial.println("FRAM_MB85RS_SPI created\n");
+    Serial.println("FRAM_MB85RS created\n");
     Serial.print("Write protect management: ");
     if (_wp)
         Serial.println("active");
@@ -146,7 +146,7 @@ void FRAM_MB85RS_SPI::init()
 ///     @return  0: device not found
 ///              1: device connected
 **/
-bool FRAM_MB85RS_SPI::checkDevice()
+bool FRAM_MB85RS::checkDevice()
 {
 	bool result = _getDeviceID();
   
@@ -172,7 +172,7 @@ bool FRAM_MB85RS_SPI::checkDevice()
 ///              1: ok
 ///     @note    F-RAM provide a continuous reading with auto-increment of the address
 **/
-bool FRAM_MB85RS_SPI::readBuf(uint32_t addr, void * buf, uint32_t size)
+bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
 {
     if ( addr >= _maxaddress
         || ((addr + size - 1) >= _maxaddress)
@@ -216,7 +216,7 @@ bool FRAM_MB85RS_SPI::readBuf(uint32_t addr, void * buf, uint32_t size)
 ///              1: ok
 ///     @note    F-RAM provide a continuous writing with auto-increment of the address
 **/
-bool FRAM_MB85RS_SPI::writeBuf(uint32_t addr, const void * buf, uint32_t size)
+bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 {
     if ( addr >= _maxaddress
         || ((addr + size - 1) >= _maxaddress)
@@ -258,7 +258,7 @@ bool FRAM_MB85RS_SPI::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 ///    @return  0: ready
 ///             1: unavailable
 **/
-bool FRAM_MB85RS_SPI::isAvailable()
+bool FRAM_MB85RS::isAvailable()
 {
 	if ( _framInitialised && digitalReadFast(_cs) == HIGH )
         return true;
@@ -274,7 +274,7 @@ bool FRAM_MB85RS_SPI::isAvailable()
 ///    @return  0: WP is disable
 ///             1: WP is enable
 **/
-bool FRAM_MB85RS_SPI::getWPStatus()
+bool FRAM_MB85RS::getWPStatus()
 {
 	return _wpStatus;
 }
@@ -287,7 +287,7 @@ bool FRAM_MB85RS_SPI::getWPStatus()
 ///    @return  0: error, WP is not managed
 ///             1: success, WP is enable
 **/
-bool FRAM_MB85RS_SPI::enableWP(void)
+bool FRAM_MB85RS::enableWP(void)
 {
 	if (_wp)
     {
@@ -307,7 +307,7 @@ bool FRAM_MB85RS_SPI::enableWP(void)
 ///    @return  0: error, WP is not managed
 ///             1: success, WP is disable
 **/
-bool FRAM_MB85RS_SPI::disableWP()
+bool FRAM_MB85RS::disableWP()
 {
 	if (_wp)
     {
@@ -327,7 +327,7 @@ bool FRAM_MB85RS_SPI::disableWP()
 ///    @return  0: error
 ///             1: ok
 **/
-bool FRAM_MB85RS_SPI::eraseChip()
+bool FRAM_MB85RS::eraseChip()
 {
     if ( !_framInitialised )
         return false;
@@ -363,7 +363,7 @@ bool FRAM_MB85RS_SPI::eraseChip()
 ///             Return the maximum memory address available
 ///    @return  _maxaddress
 **/
-uint32_t FRAM_MB85RS_SPI::getMaxMemAdr()
+uint32_t FRAM_MB85RS::getMaxMemAdr()
 {
     return _maxaddress;
 }
@@ -375,7 +375,7 @@ uint32_t FRAM_MB85RS_SPI::getMaxMemAdr()
  ///             Return the last memory address writen or read
  ///    @return  _lastaddress
  **/
-uint32_t FRAM_MB85RS_SPI::getLastMemAdr()
+uint32_t FRAM_MB85RS::getLastMemAdr()
 {
 #ifdef DEBUG_TRACE
     Serial.print("Last address used in memory: 0x");
@@ -396,7 +396,7 @@ uint32_t FRAM_MB85RS_SPI::getLastMemAdr()
 ///     @brief   _csCONFIG()
 ///              initialize the chip select line
 **/
-void FRAM_MB85RS_SPI::_csCONFIG()
+void FRAM_MB85RS::_csCONFIG()
 {
     pinMode(_cs, OUTPUT);
 }
@@ -408,7 +408,7 @@ void FRAM_MB85RS_SPI::_csCONFIG()
 ///              initialize SPI transactionnal mode and set the chip select
 ///              line as active for data transmission/reception
 **/
-void FRAM_MB85RS_SPI::_csASSERT()
+void FRAM_MB85RS::_csASSERT()
 {
     SPI.beginTransaction(SPICONFIG);
     digitalWriteFast(_cs, LOW);
@@ -420,7 +420,7 @@ void FRAM_MB85RS_SPI::_csASSERT()
 ///     @brief   _csRELEASE(), ends SPI transactionnal mode
 ///              and set the chip select line inactive
 **/
-void FRAM_MB85RS_SPI::_csRELEASE()
+void FRAM_MB85RS::_csRELEASE()
 {
     digitalWriteFast(_cs, HIGH);
     SPI.endTransaction();
@@ -441,7 +441,7 @@ void FRAM_MB85RS_SPI::_csRELEASE()
 ///     @return  0: error
 ///              1: ok
 **/
-bool FRAM_MB85RS_SPI::_getDeviceID()
+bool FRAM_MB85RS::_getDeviceID()
 {
 	uint8_t buffer[3] = { 0, 0, 0 };
     
@@ -500,7 +500,7 @@ bool FRAM_MB85RS_SPI::_getDeviceID()
 ///     @return  0: error, no DEBUG_TRACE available
 ///              1: ok, print out all the datas
 **/
-bool FRAM_MB85RS_SPI::_deviceID2Serial()
+bool FRAM_MB85RS::_deviceID2Serial()
 {
     if (!Serial)
         return false; // Serial not available
@@ -530,7 +530,7 @@ bool FRAM_MB85RS_SPI::_deviceID2Serial()
 ///              small ones use 16-bit addresses.
 ///     @param   framAddr, the address to send
 **/
-void FRAM_MB85RS_SPI::_sendAddr( uint32_t framAddr )
+void FRAM_MB85RS::_sendAddr( uint32_t framAddr )
 {
     if (_densitycode >= DENSITY_MB85RS1MT)
         SPI.transfer((framAddr >> 16) & 0xFF);  // Bits 16 to 23, MSB

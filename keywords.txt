@@ -1,12 +1,12 @@
 ###########################################
-# Syntax Coloring Map For FRAM_MB85RS_SPI.h
+# Syntax Coloring Map For FRAM_MB85RS.h
 ###########################################
 
 ###########################################
 # Datatypes (KEYWORD1)
 ###########################################
 
-FRAM_MB85RS_SPI KEYWORD1
+FRAM_MB85RS KEYWORD1
 
 ###########################################
 # Methods and Functions (KEYWORD2)

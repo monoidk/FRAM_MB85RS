@@ -28,7 +28,7 @@ uint32_t writeaddress = 0x0; // Beginning of the memory map
 
 //Creating object for FRAM chip
 uint8_t FRAM_CS = 21  ;
-static FRAM_MB85RS_SPI FRAM(FRAM_CS);
+static FRAM_MB85RS FRAM(FRAM_CS);
 
 
 

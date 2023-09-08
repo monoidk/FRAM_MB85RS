@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*! 
-    @file     FRAM_MB85RS_SPI.h
+    @file     FRAM_MB85RS.h
     @author   Ivan Labáth
               Christophe Persoz for SPI version
               SOSAndroid.fr (E. Ha.) for I2C version
@@ -41,8 +41,8 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-#ifndef __FRAM_MB85RS_SPI_H__
-#define __FRAM_MB85RS_SPI_H__
+#ifndef __FRAM_MB85RS_H__
+#define __FRAM_MB85RS_H__
 
 #include <SPI.h>
 
@@ -63,7 +63,7 @@
 #define DEFAULT_WP_STATUS false
 
 
-class FRAM_MB85RS_SPI
+class FRAM_MB85RS
 {
  private:
     // IDs - can be extends to any other compatible chip
@@ -88,8 +88,8 @@ class FRAM_MB85RS_SPI
     static constexpr uint8_t FRAM_RDID  = 0x9F; // 1001 1111 - Read Device ID
     static constexpr uint8_t FRAM_SLEEP = 0xB9; // 1011 1001 - Sleep mode
  public:
-    FRAM_MB85RS_SPI(uint8_t cs);
-    FRAM_MB85RS_SPI(uint8_t cs, uint8_t wp);
+    FRAM_MB85RS(uint8_t cs);
+    FRAM_MB85RS(uint8_t cs, uint8_t wp);
     
 
     void	init();
