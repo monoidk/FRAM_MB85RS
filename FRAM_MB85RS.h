@@ -88,8 +88,8 @@ class FRAM_MB85RS
     static constexpr uint8_t FRAM_RDID  = 0x9F; // 1001 1111 - Read Device ID
     static constexpr uint8_t FRAM_SLEEP = 0xB9; // 1011 1001 - Sleep mode
  public:
-    FRAM_MB85RS(uint8_t cs);
-    FRAM_MB85RS(uint8_t cs, uint8_t wp);
+    FRAM_MB85RS(SPIClass & spi, uint8_t cs);
+    FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp);
     
 
     void	init();
@@ -119,7 +119,7 @@ class FRAM_MB85RS
     
     
  private:
-    
+    SPIClass *  _spi;
     bool		_framInitialised;
     uint8_t     _cs;            // CS pin
     bool	_wp;            // WP management

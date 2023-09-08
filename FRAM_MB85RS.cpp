@@ -60,8 +60,9 @@
 ///              Constructor without write protection management
 ///     @param   cs, chip select pin - active low
 **/
-FRAM_MB85RS::FRAM_MB85RS(uint8_t cs)
+FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs)
 {
+    _spi = &spi;
     _cs = cs;
     _wp = false; // No WP pin connected, WP management inactive
     
@@ -80,7 +81,7 @@ FRAM_MB85RS::FRAM_MB85RS(uint8_t cs)
 ///     @param   cs, chip select pin - active low
 ///     @param   wp, write protected pin - active low
 **/
-FRAM_MB85RS::FRAM_MB85RS(uint8_t cs, uint8_t wp)
+FRAM_MB85RS::FRAM_MB85RS(SPIClass & spi, uint8_t cs, uint8_t wp)
 {
     _cs = cs;
 
@@ -107,13 +108,11 @@ FRAM_MB85RS::FRAM_MB85RS(uint8_t cs, uint8_t wp)
 /*!
 ///     @brief   init()
 ///              Inititalize the F-RAM chip
+///              Note: we do not initialize SPI
 ///     @return  if DEBUG_TRACE, provides all the informations on the chip
 **/
 void FRAM_MB85RS::init()
 {
-    SPISettings(SPICONFIG);
-    SPI.begin();
-    
     bool deviceFound = checkDevice();
     
 #if defined(DEBUG_TRACE) || defined(CHIP_TRACE)
@@ -184,13 +183,13 @@ bool FRAM_MB85RS::readBuf(uint32_t addr, void * buf, uint32_t size)
     
     _csASSERT();
     // Read byte operation
-    SPI.transfer(FRAM_READ);
+    _spi->transfer(FRAM_READ);
     _sendAddr(addr);
     
     // Read values
     for (uint32_t i = 0; i < size; ++i)
     {
-        mem[i] = SPI.transfer(0);
+        mem[i] = _spi->transfer(0);
 #ifdef DEBUG_TRACE
         Serial.print("Adr 0x"); Serial.print(addr+i, HEX);
         Serial.print(", Value[");Serial.print(i); Serial.print("] = 0x"); Serial.println(mem[i], HEX);
@@ -228,21 +227,21 @@ bool FRAM_MB85RS::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 
     // Set Memory Write Enable Latch
     _csASSERT();
-        SPI.transfer(FRAM_WREN);
+        _spi->transfer(FRAM_WREN);
     _csRELEASE();
     
     // Write byte operation
     _csASSERT();
-        SPI.transfer(FRAM_WRITE);
+        _spi->transfer(FRAM_WRITE);
         _sendAddr(addr);
         // Write values
         for (uint32_t i = 0; i < size; ++i)
-            SPI.transfer(mem[i]);
+            _spi->transfer(mem[i]);
     _csRELEASE();
     
     // Reset Memory Write Enable Latch
     _csASSERT();
-        SPI.transfer(FRAM_WRDI);
+        _spi->transfer(FRAM_WRDI);
     _csRELEASE();
     
     _lastaddress = addr + size - 1;
@@ -410,7 +409,7 @@ void FRAM_MB85RS::_csCONFIG()
 **/
 void FRAM_MB85RS::_csASSERT()
 {
-    SPI.beginTransaction(SPICONFIG);
+    _spi->beginTransaction(SPICONFIG);
     digitalWriteFast(_cs, LOW);
 }
 
@@ -423,7 +422,7 @@ void FRAM_MB85RS::_csASSERT()
 void FRAM_MB85RS::_csRELEASE()
 {
     digitalWriteFast(_cs, HIGH);
-    SPI.endTransaction();
+    _spi->endTransaction();
 }
 
 
@@ -447,11 +446,11 @@ bool FRAM_MB85RS::_getDeviceID()
     
     _csASSERT();
     
-    SPI.transfer(FRAM_RDID);
-    _manufacturer = SPI.transfer(0);
-    buffer[0] = SPI.transfer(0);
-    buffer[1] = SPI.transfer(0);
-    buffer[2] = SPI.transfer(0);
+    _spi->transfer(FRAM_RDID);
+    _manufacturer = _spi->transfer(0);
+    buffer[0] = _spi->transfer(0);
+    buffer[1] = _spi->transfer(0);
+    buffer[2] = _spi->transfer(0);
     
     _csRELEASE();
 
@@ -533,7 +532,7 @@ bool FRAM_MB85RS::_deviceID2Serial()
 void FRAM_MB85RS::_sendAddr( uint32_t framAddr )
 {
     if (_densitycode >= DENSITY_MB85RS1MT)
-        SPI.transfer((framAddr >> 16) & 0xFF);  // Bits 16 to 23, MSB
-    SPI.transfer((framAddr >> 8) & 0xFF);       // Bits 8 to 15
-    SPI.transfer((framAddr     ) & 0xFF);       // Bits 0 to 7,   LSB
+        _spi->transfer((framAddr >> 16) & 0xFF);  // Bits 16 to 23, MSB
+    _spi->transfer((framAddr >> 8) & 0xFF);       // Bits 8 to 15
+    _spi->transfer((framAddr     ) & 0xFF);       // Bits 0 to 7,   LSB
 }
