@@ -32,15 +32,16 @@ Please note when you activate DEBUG_TRACE & CHIP_TRACE in .h the performances ar
 
 **Fujitsu FRAM** - manufacturer code 0x04 - [Fujitsu page](http://www.fujitsu.com/us/products/devices/semiconductor/memory/fram/lineup/index.html)
 
-|  Model | Density (kB) | Device ID feature | Density code | Memory addressing | Tested |
-|  ------ | :------: | :------: | :------: | :------: | :------: |
-|  **MB85RS64V** | 64 | Yes | 0x03 | 16 bits | No |
-|  **MB85RS64T** | 64 | Yes | 0x03 | 16 bits | Yes |
-|  **MB85RS128B** | 128 | Yes | 0x04 | 16 bits | No |
-|  **MB85RS256B** | 256 | Yes | 0x05 | 16 bits | No |
-|  **MB85RS512T** | 512 | Yes | 0x06 | 16 bits | No |
-|  **MB85RS1MT** | 1024 | Yes | 0x07 | 24 bits | Yes |
-|  **MB85RS2MT** | 2048 | Yes | 0x08 | 24 bits | No |
+|  Model | Density (kB) | Device ID feature | Density code | Addressing | Rated Speed | Tested |
+|  ------ | :------: | :------: | :------: | :------: | :------: | :------: |
+|  **MB85RS64V** | 64 | Yes | 0x03 | 16 bits | 20MHz | No |
+|  **MB85RS64T** | 64 | Yes | 0x03 | 16 bits | 10MHz | Yes |
+|  **MB85RS128B** | 128 | Yes | 0x04 | 16 bits | | No |
+|  **MB85RS128TY** | 128 | Yes | 0x04 | 16 bits | 40MHz | No |
+|  **MB85RS256B** | 256 | Yes | 0x05 | 16 bits | | No |
+|  **MB85RS512T** | 512 | Yes | 0x06 | 16 bits | | No |
+|  **MB85RS1MT** | 1024 | Yes | 0x07 | 24 bits | 30MHz | Yes |
+|  **MB85RS2MT** | 2048 | Yes | 0x08 | 24 bits | 25/40MHz | No |
 
 
 ## To do ##
@@ -66,7 +67,7 @@ Close to the complete release...
 ## Testing ##
 
 Christophe Persoz owns 1Mbit chips, that he presumably tested.
-I use MB85RS64T 64kBit chips, that seem to worok.
+I use MB85RS64T 64kBit chips, that seem to work.
 This library has been developped to work on ARM Teensy 3.2, 3.5 and above.
 It should be works on Arduino too, but I won't test it.
 
