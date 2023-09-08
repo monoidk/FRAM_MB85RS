@@ -469,24 +469,21 @@ bool FRAM_MB85RS::_getDeviceID()
             case DENSITY_MB85RS512:
             case DENSITY_MB85RS1M:
             case DENSITY_MB85RS2M:
-                _density = pow (2, _densitycode+3);
-                _maxaddress = _density*128;
+                _density = 1 << (_densitycode + 3);
                 break;
 
             default:
                 // F-RAM chip unidentified
                 _density = 0;
-                _maxaddress = 0;
                 return false;
                 break;
         }
     } else {
         // F-RAM chip unidentified
         _density = 0;
-        _maxaddress = 0;
         return false;
     }
-
+    _maxaddress = _density*128;
     return true;
 }
 
