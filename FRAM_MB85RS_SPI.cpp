@@ -157,124 +157,6 @@ bool FRAM_MB85RS_SPI::checkDevice()
 
 
 /*!
-///     @brief   write()
-///              Write a 8-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 8-bits value to write
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-    // Set Memory Write Enable Latch, otherwise no Write can be achieve
-    _csASSERT();
-        SPI.transfer(FRAM_WREN);
-    _csRELEASE();
-    
-    // Write byte operation
-    _csASSERT();
-        SPI.transfer(FRAM_WRITE);
-        _sendAddr(framAddr);
-        // Write value
-        SPI.transfer(value);
-    _csRELEASE();
-    
-    // Reset Memory Write Enable Latch
-    _csASSERT();
-        SPI.transfer(FRAM_WRDI);
-    _csRELEASE();
-    
-    _lastaddress = framAddr+1;
-    
-	return true;
-}
-
-
-
-/*!
-///     @brief   write()
-///              Write a 16-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 16-bits value to write
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-    // Set Memory Write Enable Latch, otherwise no Write can be achieve
-    _csASSERT();
-        SPI.transfer(FRAM_WREN);
-    _csRELEASE();
-    
-    // Write byte operation
-    _csASSERT();
-        SPI.transfer(FRAM_WRITE);
-        _sendAddr(framAddr);
-        // Write value
-        SPI.transfer(value);
-        SPI.transfer((value >> 8) & 0xFF);
-    _csRELEASE();
-    
-    // Reset Memory Write Enable Latch
-    _csASSERT();
-        SPI.transfer(FRAM_WRDI);
-    _csRELEASE();
-    
-    _lastaddress = framAddr+2;
-    
-    return true;
-}
-
-
-
-/*!
-///     @brief   write()
-///              Write a 32-bits value to the specified F-RAM address
-///     @param   framAddr, the memory address on 32-bits
-///     @param   value, the 32-bits value to write
-///     @return  0: error
-///              1: ok
-**/
-bool FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
-{
-    if (framAddr >= _maxaddress || !_framInitialised)
-        return false;
-    
-    // Set Memory Write Enable Latch, otherwise no Write can be achieve
-    _csASSERT();
-        SPI.transfer(FRAM_WREN);
-    _csRELEASE();
-    
-    // Write byte operation
-    _csASSERT();
-        SPI.transfer(FRAM_WRITE);
-        _sendAddr(framAddr);
-        // Write value
-        SPI.transfer(value & 0xFF);
-        SPI.transfer((value & 0xFFFF) >> 8);
-        SPI.transfer((value & 0xFFFFFF) >> 16);
-        SPI.transfer(value >> 24);
-    _csRELEASE();
- 
-    // Reset Memory Write Enable Latch
-    _csASSERT();
-        SPI.transfer(FRAM_WRDI);
-    _csRELEASE();
-    
-    _lastaddress = framAddr+4;
-    
-    return true;
-}
-
-
-
-/*!
 ///     @brief   readBuf()
 ///              Read an array made of 8-bits values from the specified F-RAM address
 ///     @param   addr, the memory address to read from
@@ -319,23 +201,25 @@ bool FRAM_MB85RS_SPI::readBuf(uint32_t addr, void * buf, uint32_t size)
 
 
 /*!
-///     @brief   writeArray()
+///     @brief   writeBuf()
 ///              Write an array made of 8-bits values from the specified F-RAM address
-///     @param   framAddr, the memory address to write from
-///     @param   values[], the array of 8-bits value to write
-///     @param   nb, the number of elements to write
+///     @param   addr, the memory address to write from
+///     @param   buf, the array of 8-bits value to write
+///     @param   size, the number of elements to write
 ///     @return  0: error
 ///              1: ok
 ///     @note    F-RAM provide a continuous writing with auto-increment of the address
 **/
-bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_t nbItems )
+bool FRAM_MB85RS_SPI::writeBuf(uint32_t addr, const void * buf, uint32_t size)
 {
-    if ( startAddr >= _maxaddress
-        || ((startAddr + nbItems - 1) >= _maxaddress)
-        || nbItems == 0
+    if ( addr >= _maxaddress
+        || ((addr + size - 1) >= _maxaddress)
+        || size == 0
         || !_framInitialised )
         return false;
     
+    const uint8_t * mem = (const uint8_t *) buf;
+
     // Set Memory Write Enable Latch
     _csASSERT();
         SPI.transfer(FRAM_WREN);
@@ -344,10 +228,10 @@ bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_t n
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _sendAddr(startAddr);
+        _sendAddr(addr);
         // Write values
-        for (uint32_t i = 0; i < nbItems; i++)
-            SPI.transfer(values[i]);
+        for (uint32_t i = 0; i < size; ++i)
+            SPI.transfer(mem[i]);
     _csRELEASE();
     
     // Reset Memory Write Enable Latch
@@ -355,55 +239,7 @@ bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_t n
         SPI.transfer(FRAM_WRDI);
     _csRELEASE();
     
-    _lastaddress = startAddr + nbItems - 1;
-    
-    return true;
-}
-
-
-
-/*!
- ///     @brief   writeArray()
- ///              Write an array made of 16-bits values from the specified F-RAM address
- ///     @param   framAddr, the memory address to write from
- ///     @param   values[], the array of 16-bits value to write
- ///     @param   nb, the number of elements to write
- ///     @return  0: error
- ///              1: ok
- ///     @note    F-RAM provide a continuous writing with auto-increment of the address
- **/
-bool FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint16_t values[], size_t nbItems )
-{
-    if ( startAddr >= _maxaddress
-        || ((startAddr + (nbItems*2) - 2) >= _maxaddress)
-        || nbItems == 0
-        || !_framInitialised )
-        return false;
-    
-    // Set Memory Write Enable Latch
-    _csASSERT();
-        SPI.transfer(FRAM_WREN);
-    _csRELEASE();
-    
-    // Write byte operation
-    _csASSERT();
-        SPI.transfer(FRAM_WRITE);
-        _sendAddr(startAddr);
-        
-        // Write values
-        for (uint32_t i = 0; i < nbItems; i++)
-        {
-            SPI.transfer(values[i]);
-            SPI.transfer((values[i] >> 8) & 0xFF);
-        }
-    _csRELEASE();
-    
-    // Reset Memory Write Enable Latch
-    _csASSERT();
-        SPI.transfer(FRAM_WRDI);
-    _csRELEASE();
-    
-    _lastaddress = startAddr + (nbItems*2) - 2;
+    _lastaddress = addr + size - 1;
     
     return true;
 }
