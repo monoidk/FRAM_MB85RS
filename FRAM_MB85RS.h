@@ -64,12 +64,12 @@ class FRAM_MB85RS
     static constexpr uint8_t FUJITSU_ID = 0x04;
 
     // Density codes gives the memory's adressing scheme
-    static constexpr uint8_t DENSITY_MB85RS64V  = 0x03; // 64K
-    static constexpr uint8_t DENSITY_MB85RS128B = 0x04; // 128K
-    static constexpr uint8_t DENSITY_MB85RS256B = 0x05; // 256K
-    static constexpr uint8_t DENSITY_MB85RS512T = 0x06; // 512K
-    static constexpr uint8_t DENSITY_MB85RS1MT  = 0x07; // 1M
-    static constexpr uint8_t DENSITY_MB85RS2MT  = 0x08; // 2M
+    static constexpr uint8_t DENSITY_MB85RS64   = 0x03; // 64K
+    static constexpr uint8_t DENSITY_MB85RS128  = 0x04; // 128K
+    static constexpr uint8_t DENSITY_MB85RS256  = 0x05; // 256K
+    static constexpr uint8_t DENSITY_MB85RS512  = 0x06; // 512K
+    static constexpr uint8_t DENSITY_MB85RS1M   = 0x07; // 1M
+    static constexpr uint8_t DENSITY_MB85RS2M   = 0x08; // 2M
 
     // OP-CODES
     static constexpr uint8_t FRAM_WRSR  = 0x01; // 0000 0001 - Write Status Register

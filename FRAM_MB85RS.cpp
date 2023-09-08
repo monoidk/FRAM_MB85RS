@@ -463,12 +463,12 @@ bool FRAM_MB85RS::_getDeviceID()
 
     if (_manufacturer == FUJITSU_ID) {
         switch (_densitycode) {
-            case DENSITY_MB85RS64V:
-            case DENSITY_MB85RS128B:
-            case DENSITY_MB85RS256B:
-            case DENSITY_MB85RS512T:
-            case DENSITY_MB85RS1MT:
-            case DENSITY_MB85RS2MT:
+            case DENSITY_MB85RS64:
+            case DENSITY_MB85RS128:
+            case DENSITY_MB85RS256:
+            case DENSITY_MB85RS512:
+            case DENSITY_MB85RS1M:
+            case DENSITY_MB85RS2M:
                 _density = pow (2, _densitycode+3);
                 _maxaddress = _density*128;
                 break;
@@ -529,7 +529,7 @@ bool FRAM_MB85RS::_deviceID2Serial()
 **/
 void FRAM_MB85RS::_sendAddr( uint32_t framAddr )
 {
-    if (_densitycode >= DENSITY_MB85RS1MT)
+    if (_densitycode >= DENSITY_MB85RS1M)
         _spi->transfer((framAddr >> 16) & 0xFF);  // Bits 16 to 23, MSB
     _spi->transfer((framAddr >> 8) & 0xFF);       // Bits 8 to 15
     _spi->transfer((framAddr     ) & 0xFF);       // Bits 0 to 7,   LSB
