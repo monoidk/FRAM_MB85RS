@@ -57,29 +57,6 @@
 #endif
 
 
-// IDs - can be extends to any other compatible chip
-#define FUJITSU_ID 0x04
-
-// Density codes gives the memory's adressing scheme
-#define DENSITY_MB85RS64V  0x03	// 64K
-#define DENSITY_MB85RS128B 0x04	// 128K
-#define DENSITY_MB85RS256B 0x05	// 256K
-#define DENSITY_MB85RS512T 0x06	// 512K
-#define DENSITY_MB85RS1MT  0x07	// 1M
-#define DENSITY_MB85RS2MT  0x08	// 2M
-
-// OP-CODES
-#define FRAM_WRSR  0x01 // 0000 0001 - Write Status Register
-#define FRAM_WRITE 0x02 // 0000 0010 - Write Memory
-#define FRAM_READ  0x03 // 0000 0011 - Read Memory
-#define FRAM_WRDI  0x04 // 0000 0100 - Reset Write Enable Latch
-#define FRAM_RDSR  0x05 // 0000 0101 - Read Status Register
-#define FRAM_WREN  0x06 // 0000 0110 - Set Write Enable Latch
-#define FRAM_FSTRD 0x0B // 0000 1011 - Fast Read
-#define FRAM_RDID  0x9F // 1001 1111 - Read Device ID
-#define FRAM_SLEEP 0xB9 // 1011 1001 - Sleep mode
-
-
 // Managing Write protect pin
 // false means protection off, write enabled
 #define DEFAULT_WP_STATUS false
@@ -87,6 +64,28 @@
 
 class FRAM_MB85RS_SPI
 {
+ private:
+    // IDs - can be extends to any other compatible chip
+    static constexpr uint8_t FUJITSU_ID = 0x04;
+
+    // Density codes gives the memory's adressing scheme
+    static constexpr uint8_t DENSITY_MB85RS64V  = 0x03;	// 64K
+    static constexpr uint8_t DENSITY_MB85RS128B = 0x04;	// 128K
+    static constexpr uint8_t DENSITY_MB85RS256B = 0x05;	// 256K
+    static constexpr uint8_t DENSITY_MB85RS512T = 0x06;	// 512K
+    static constexpr uint8_t DENSITY_MB85RS1MT  = 0x07;	// 1M
+    static constexpr uint8_t DENSITY_MB85RS2MT  = 0x08;	// 2M
+
+    // OP-CODES
+    static constexpr uint8_t FRAM_WRSR  = 0x01; // 0000 0001 - Write Status Register
+    static constexpr uint8_t FRAM_WRITE = 0x02; // 0000 0010 - Write Memory
+    static constexpr uint8_t FRAM_READ  = 0x03; // 0000 0011 - Read Memory
+    static constexpr uint8_t FRAM_WRDI  = 0x04; // 0000 0100 - Reset Write Enable Latch
+    static constexpr uint8_t FRAM_RDSR  = 0x05; // 0000 0101 - Read Status Register
+    static constexpr uint8_t FRAM_WREN  = 0x06; // 0000 0110 - Set Write Enable Latch
+    static constexpr uint8_t FRAM_FSTRD = 0x0B; // 0000 1011 - Fast Read
+    static constexpr uint8_t FRAM_RDID  = 0x9F; // 1001 1111 - Read Device ID
+    static constexpr uint8_t FRAM_SLEEP = 0xB9; // 1011 1001 - Sleep mode
  public:
     FRAM_MB85RS_SPI(uint8_t cs);
     FRAM_MB85RS_SPI(uint8_t cs, uint8_t wp);
