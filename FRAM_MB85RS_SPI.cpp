@@ -213,7 +213,8 @@ bool FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
         buffer[1] = SPI.transfer(0);
     _csRELEASE();
     
-    *value = ((uint16_t) buffer[1] << 8) + (uint16_t)buffer[0];
+    *value = (((uint16_t)buffer[1] << 8) |
+              ((uint16_t)buffer[0]     ));
     
     _lastaddress = framAddr+2;
     
