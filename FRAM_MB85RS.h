@@ -125,7 +125,6 @@ class FRAM_MB85RS
     uint8_t     _manufacturer;  // Manufacturer ID
     uint16_t    _productID;     // Product ID
     uint8_t     _densitycode;   // Code which represent the size of the chip
-    uint16_t    _density;       // Human readable size of F-RAM chip
     uint32_t    _size;          // Size of F-RAM chip in bytes
     uint32_t    _lastaddress;   // Last address used in memory
 

@@ -461,6 +461,7 @@ bool FRAM_MB85RS::_getDeviceID()
     _densitycode = buffer[1] &= (1<<5)-1; // Only the 5 first bits
     _productID = (buffer[2] << 8) + buffer[3]; // Is really necessary to read this info ?
 
+    uint32_t density = 0;
     if (_manufacturer == FUJITSU_ID) {
         switch (_densitycode) {
             case DENSITY_MB85RS64:
@@ -469,21 +470,21 @@ bool FRAM_MB85RS::_getDeviceID()
             case DENSITY_MB85RS512:
             case DENSITY_MB85RS1M:
             case DENSITY_MB85RS2M:
-                _density = 1 << (_densitycode + 3);
+                density = 1 << (_densitycode + 3);
                 break;
 
             default:
                 // F-RAM chip unidentified
-                _density = 0;
+                density = 0;
                 return false;
                 break;
         }
     } else {
         // F-RAM chip unidentified
-        _density = 0;
+        density = 0;
         return false;
     }
-    _size = _density*128;
+    _size = density * (1024 / 8);
     return true;
 }
 
@@ -506,7 +507,8 @@ bool FRAM_MB85RS::_deviceID2Serial()
     Serial.print("Manufacturer 0x"); Serial.println(_manufacturer, HEX);
     Serial.print("ProductID 0x"); Serial.println(_productID, HEX);
     Serial.print("Density code 0x"); Serial.print(_densitycode, HEX);
-    Serial.print(", Chip density "); Serial.print(_density, DEC); Serial.println("KBits");
+    uint32_t density = _size * 8 / 1024;
+    Serial.print(", Chip density "); Serial.print(density, DEC); Serial.println("KBits");
     Serial.print("Max address : 0 to "); Serial.print(_size-1, DEC); Serial.print(" / "); Serial.println(_size-1, HEX);
     Serial.println("Device identfied automatically");
 #else
