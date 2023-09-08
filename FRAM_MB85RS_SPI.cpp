@@ -177,7 +177,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint8_t *value )
     _csASSERT();
         // Read byte operation
         SPI.transfer(FRAM_READ);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Read value
         *value = SPI.transfer(0);
     _csRELEASE();
@@ -207,7 +207,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint16_t *value )
     _csASSERT();
         // Read byte operation
         SPI.transfer(FRAM_READ);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Read value
         buffer[0] = SPI.transfer(0);
         buffer[1] = SPI.transfer(0);
@@ -240,7 +240,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
     _csASSERT();
         // Read byte operation
         SPI.transfer(FRAM_READ);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Read value
         buffer[0] = SPI.transfer(0);
         buffer[1] = SPI.transfer(0);
@@ -278,7 +278,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Write value
         SPI.transfer(value);
     _csRELEASE();
@@ -316,7 +316,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Write value
         SPI.transfer(value);
         SPI.transfer((value >> 8) & 0xFF);
@@ -355,7 +355,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _setMemAddr(&framAddr);
+        _sendAddr(framAddr);
         // Write value
         SPI.transfer(value & 0xFF);
         SPI.transfer((value & 0xFFFF) >> 8);
@@ -396,7 +396,7 @@ boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint8_t values[], size_t
     _csASSERT();
     // Read byte operation
     SPI.transfer(FRAM_READ);
-    _setMemAddr(&startAddr);
+    _sendAddr(startAddr);
     
     // Read values
     for (uint32_t i = 0; i < nbItems; i++)
@@ -440,7 +440,7 @@ boolean FRAM_MB85RS_SPI::readArray( uint32_t startAddr, uint16_t values[], size_
     _csASSERT();
         // Read byte operation
         SPI.transfer(FRAM_READ);
-        _setMemAddr(&startAddr);
+        _sendAddr(startAddr);
         
         // Read values
         for (uint32_t i = 0; i < nbItems; i++)
@@ -489,7 +489,7 @@ boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint8_t values[], size_
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _setMemAddr(&startAddr);
+        _sendAddr(startAddr);
         // Write values
         for (uint32_t i = 0; i < nbItems; i++)
             SPI.transfer(values[i]);
@@ -533,7 +533,7 @@ boolean FRAM_MB85RS_SPI::writeArray( uint32_t startAddr, uint16_t values[], size
     // Write byte operation
     _csASSERT();
         SPI.transfer(FRAM_WRITE);
-        _setMemAddr(&startAddr);
+        _sendAddr(startAddr);
         
         // Write values
         for (uint32_t i = 0; i < nbItems; i++)
@@ -827,19 +827,19 @@ boolean FRAM_MB85RS_SPI::_deviceID2Serial()
 
 
 /*!
-///     @brief   _setMemAddr()
-///              Set the memory address coded on 24-bits over SPI
-///              Only chip of 1Mbit or above have their address on 24bit,
-///              all the other chip are addressed on 16-bits only.
-///     @param   framAddr, the 32bit address to send
+///     @brief   _sendAddr()
+///              Sends memory address to SPI bus.
+///              Chips of 1Mbit or above use 24-bit addresses,
+///              small ones use 16-bit addresses.
+///     @param   framAddr, the address to send
 **/
-void FRAM_MB85RS_SPI::_setMemAddr( uint32_t *framAddr )
+void FRAM_MB85RS_SPI::_sendAddr( uint32_t framAddr )
 {
     if (_densitycode >= DENSITY_MB85RS1MT)
-        SPI.transfer((*framAddr >> 16) & 0xFF);  // Bits 16 to 23
-    SPI.transfer((*framAddr >> 8) & 0xFF);    // Bits 8 to 15
-    SPI.transfer(*framAddr & 0xFF);  // LSB, Bits 0 to 7
+        SPI.transfer((framAddr >> 16) & 0xFF);  // Bits 16 to 23, MSB
+    SPI.transfer((framAddr >> 8) & 0xFF);       // Bits 8 to 15
+    SPI.transfer((framAddr     ) & 0xFF);       // Bits 0 to 7,   LSB
     
-    _lastaddress = *framAddr;
+    _lastaddress = framAddr;
 }
 

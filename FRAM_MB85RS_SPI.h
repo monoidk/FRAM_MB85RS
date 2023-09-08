@@ -135,7 +135,7 @@ class FRAM_MB85RS_SPI
     void        _csRELEASE();
     boolean     _getDeviceID();
     boolean     _deviceID2Serial();
-    void        _setMemAddr(uint32_t *framAddr);
+    void        _sendAddr(uint32_t framAddr);
 };
 
 
