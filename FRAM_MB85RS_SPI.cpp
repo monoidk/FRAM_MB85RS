@@ -267,7 +267,7 @@ boolean FRAM_MB85RS_SPI::read( uint32_t framAddr, uint32_t *value )
 **/
 boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
 {
-    if (value > 0xFF || framAddr >= _maxaddress || !_framInitialised)
+    if (framAddr >= _maxaddress || !_framInitialised)
         return false;
     
     // Set Memory Write Enable Latch, otherwise no Write can be achieve
@@ -305,7 +305,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint8_t value )
 **/
 boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
 {
-    if (value > 0xFFFF || framAddr >= _maxaddress || !_framInitialised)
+    if (framAddr >= _maxaddress || !_framInitialised)
         return false;
     
     // Set Memory Write Enable Latch, otherwise no Write can be achieve
@@ -344,7 +344,7 @@ boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint16_t value )
 **/
 boolean FRAM_MB85RS_SPI::write( uint32_t framAddr, uint32_t value )
 {
-    if (value > 0xFFFFFFFF || framAddr >= _maxaddress || !_framInitialised)
+    if (framAddr >= _maxaddress || !_framInitialised)
         return false;
     
     // Set Memory Write Enable Latch, otherwise no Write can be achieve
